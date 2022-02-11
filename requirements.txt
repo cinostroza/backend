@@ -1,0 +1,5 @@
+Django~=4.0.1
+graphene~=2.1.9
+pandas~=1.4.0
+openpyxl~=3.0.9
+requests~=2.27.1
