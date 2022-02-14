@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graphene_django',
     'suppliers',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,8 +85,8 @@ DATABASES = {
         'NAME': 'minero_db',
         'USER': 'root',
         'PASSWORD': 'my-secret-pw',
-        'HOST': '127.0.0.1',
-        'PORT': '65284',
+        'HOST': '0.0.0.0',
+        'PORT': '49907',
     }
 }
 
@@ -131,5 +133,15 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 GRAPHENE = {
-    "SCHEMA": "suppliers.schema.schema"
+    "SCHEMA": 'suppliers.schema.schema',
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'https://studio.apollographql.com',
+    'http://localhost',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://studio.apollographql.com',
+]
+

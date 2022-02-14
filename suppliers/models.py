@@ -1,5 +1,12 @@
 from django.db import models
 
+"""
+Los objetivos de estos modelos son los siguientes:
+1.- Asociar automaticamente los codigos de productos de los proveedores con los codigos de los productos en Bsale.
+2.- Asociar los productos con proveedores.
+3.- Asociar los productos con proveedores y con sus costos netos.
+"""
+
 
 class Supplier(models.Model):
     name = models.CharField(max_length=300, null=False)
@@ -28,7 +35,7 @@ class Seller(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200, null=False)
-    bar_code = models.CharField(max_length=100, null=True, unique=True)
+    code = models.CharField(max_length=100, null=True, unique=True)
     description = models.CharField(max_length=500, null=True)
     suppliers = models.ManyToManyField(Supplier, related_name="products")
 
@@ -37,27 +44,6 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Item(models.Model):
-    product = models.ForeignKey(Product, related_name="item", on_delete=models.CASCADE)
-    cost = models.FloatField(null=False)
-    discount = models.FloatField(null=True)
-    units = models.CharField(max_length=20, null=True)
-    quantity = models.IntegerField(null=False)
-
-    class Meta:
-        ordering = ['product']
-
-    def __str__(self):
-        return self.product_id
-
-
-class Invoice(models.Model):
-    supplier = models.ForeignKey(Supplier, related_name="invoice", on_delete=models.CASCADE)
-    number = models.CharField(max_length=100, name=False)
-    items = models.ManyToManyField(Item, related_name="item")
-    date = models.DateField()
 
 
 class ProductCodes(models.Model):
@@ -69,3 +55,28 @@ class ProductCodes(models.Model):
 class BsaleCodes(models.Model):
     product = models.ForeignKey(Product, related_name="bsale_code", on_delete=models.CASCADE)
     code = models.CharField(max_length=50, null=False)
+
+
+class Invoice(models.Model):
+    supplier = models.ForeignKey(Supplier, related_name="invoice", on_delete=models.CASCADE)
+    number = models.CharField(max_length=100, name=False)
+    date = models.DateField()
+
+    def __str__(self):
+        return str(self.number)
+
+
+class Item(models.Model):
+    product = models.ForeignKey(Product, related_name="item", on_delete=models.CASCADE)
+    cost = models.FloatField(null=False)
+    discount = models.FloatField(null=True)
+    units = models.CharField(max_length=20, null=True)
+    quantity = models.IntegerField(null=False)
+    invoice = models.ForeignKey(Invoice, related_name="item", on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['product']
+
+    def __str__(self):
+        return str(self.product_id)
+

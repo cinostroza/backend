@@ -19,9 +19,19 @@ class ProductClass:
         self.total_price = 0
         self.bsale_code = None
 
-    def get_product_by_code(self):
+    def get_product_by_code_on_bsale(self):
         results = []
+        product = None
         for code in self.codes:
-            result = get_variant_list(code=code)
-            results.append(result['items'])
-        print(results)
+            try:
+                product = ProductCodes.objects.filter(code__exact=code).get().product
+            except:
+                continue
+
+        if product is None:
+            results.append("Not found")
+            return results
+
+        result = get_variant_list(code=product.bsale_code)
+        results.append(result['items'])
+        return results

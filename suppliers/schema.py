@@ -7,7 +7,7 @@ from .models import Supplier, Seller, Product
 class ProductType(DjangoObjectType):
     class Meta:
         model = Product
-        fields = ("name", "bar_code", "price", "cost", "description", "supplier")
+        fields = ("name", "bar_code", "cost", "description", "supplier", "item")
 
 
 class SupplierType(DjangoObjectType):
@@ -43,4 +43,31 @@ class Query(graphene.ObjectType):
             return None
 
 
-schema = graphene.Schema(query=Query)
+class CreateSupplier(graphene.Mutation):
+    class Arguments:
+        name = graphene.String()
+        rut = graphene.String()
+        address = graphene.String()
+        notes = graphene.String()
+
+    ok = graphene.Boolean()
+    supplier = graphene.Field(lambda: SupplierType)
+
+    def mutate(root, info, name, rut, address, notes):
+        supplier = Supplier(name=name,
+                            rut=rut,
+                            address=address,
+                            notes=notes)
+        try:
+            supplier.save()
+            ok = True
+        except Exception:
+            ok = False
+        return CreateSupplier(supplier=supplier, ok=ok)
+
+
+class MyMutations(graphene.ObjectType):
+    create_supplier = CreateSupplier.Field()
+
+
+schema = graphene.Schema(query=Query, mutation=MyMutations)
