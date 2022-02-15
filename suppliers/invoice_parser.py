@@ -48,6 +48,7 @@ class InvoiceParser:
             current_product.qty = product_qty
             current_product.unit = product_unit
             current_product.total_price = product_total_price
+            current_product.get_product_by_code()
             self.product_list.append(current_product)
 
     def export_to_excel(self):
@@ -100,15 +101,24 @@ class InvoiceParser:
         if len(self.product_list) == 0:
             return
         else:
-            if not Supplier.objects.filter(rut__exact=self.supplier).exists():
-                new_supplier = Supplier(rut=self.supplier, name=self.supplier_name)
+            if Supplier.objects.get(rut__exact=self.supplier).DoesNotExist:
+                new_supplier = Supplier(name=self.supplier_name, rut=self.supplier)
                 new_supplier.save()
-
-            if not Invoice.objects.filter(supplier=Supplier.objects.filter(rut__exact=self.supplier),
-                                          number=self.code):
-                new_invoice = Invoice(supplier=Supplier.objects.filter(rut__exact=self.supplier),
-                                      number=self.code)
-
                 for product in self.product_list:
-                    # loop trough products and add invoice detail
-                    pass
+                    if product.product is not None:
+                        new_supplier.products.add(product.product)
+                        for code in product.codes:
+                            try:
+                                code_object = ProductCodes.objects.get(code__exact=code)
+                            except ProductCodes.DoesNotExist:
+                                code_object = ProductCodes(code=code)
+                                code_object.save()
+                            new_supplier.productcodes_set.add(code_object)
+                            product.product.productcodes_set.add(code_object)
+                new_supplier.save()
+            else:
+                supplier = Supplier.objects.get(rut__exact=self.supplier)
+                for product in self.product_list:
+                    if product.product is not None:
+                        supplier.products.add(product.product)
+                supplier.save()

@@ -25,5 +25,6 @@ class ProductClass:
         for code in self.codes:
             try:
                 self.product = ProductCodes.objects.filter(code__exact=code).get().product
+                self.bsale_code = self.product.bsale_code
             except Exception:
                 continue
