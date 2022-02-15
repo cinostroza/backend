@@ -10,6 +10,7 @@ from bsale_api_helper.api_helper import get_variant_list
 
 class ProductClass:
     def __init__(self, codes, name, supplier):
+        self.product = None
         self.codes = codes
         self.name = name
         self.supplier = supplier
@@ -18,20 +19,11 @@ class ProductClass:
         self.unit = ""
         self.total_price = 0
         self.bsale_code = None
+        self.get_product_by_code()
 
-    def get_product_by_code_on_bsale(self):
-        results = []
-        product = None
+    def get_product_by_code(self):
         for code in self.codes:
             try:
-                product = ProductCodes.objects.filter(code__exact=code).get().product
-            except:
+                self.product = ProductCodes.objects.filter(code__exact=code).get().product
+            except Exception:
                 continue
-
-        if product is None:
-            results.append("Not found")
-            return results
-
-        result = get_variant_list(code=product.bsale_code)
-        results.append(result['items'])
-        return results

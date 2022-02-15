@@ -35,7 +35,8 @@ class Seller(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200, null=False)
-    code = models.CharField(max_length=100, null=True, unique=True)
+    code = models.CharField(max_length=100, null=True, unique=False)
+    bsale_code = models.CharField(max_length=50, null=True, unique=False)
     description = models.CharField(max_length=500, null=True)
     suppliers = models.ManyToManyField(Supplier, related_name="products")
 
@@ -50,11 +51,6 @@ class ProductCodes(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     code = models.CharField(max_length=200, null=False)
-
-
-class BsaleCodes(models.Model):
-    product = models.ForeignKey(Product, related_name="bsale_code", on_delete=models.CASCADE)
-    code = models.CharField(max_length=50, null=False)
 
 
 class Invoice(models.Model):
