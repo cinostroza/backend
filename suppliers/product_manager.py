@@ -1,4 +1,4 @@
-from .models import Product, ProductCodes, BsaleCodes
+from .models import Product, ProductCodes
 from bsale_api_helper.api_helper import get_variant_list
 
 
