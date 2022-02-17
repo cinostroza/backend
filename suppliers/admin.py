@@ -1,5 +1,5 @@
 from django.contrib import admin
-from suppliers.models import Product, Supplier, Seller, Invoice, Item
+from suppliers.models import Product, Supplier, Seller, Invoice, Item, CrudeInvoiceItem
 
 # Register your models here.
 
@@ -12,8 +12,12 @@ class InvoiceItemInline(admin.TabularInline):
     model = Item
 
 
+class InvoiceCrudeItemInline(admin.TabularInline):
+    model = CrudeInvoiceItem
+
+
 class InvoiceAdmin(admin.ModelAdmin):
-    inlines = [InvoiceItemInline]
+    inlines = [InvoiceItemInline, InvoiceCrudeItemInline]
 
 
 admin.site.register(Invoice, InvoiceAdmin)

@@ -138,10 +138,13 @@ GRAPHENE = {
 
 CORS_ALLOWED_ORIGINS = [
     'https://studio.apollographql.com',
-    'http://localhost',
+    'http://localhost:3000',
+    'http://127.0.0.1',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://studio.apollographql.com',
+    'http://localhost:3000',
+    'http://127.0.0.1'
 ]
 

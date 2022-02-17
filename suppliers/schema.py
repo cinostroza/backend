@@ -1,7 +1,8 @@
 import graphene
 from graphene_django import DjangoObjectType
-
-from .models import Supplier, Seller, Product, Invoice, Item
+from .invoice_parser import InvoiceParser
+from .models import Supplier, Seller, Product, Invoice, Item, CrudeInvoiceItem
+from graphene_file_upload.scalars import Upload
 
 
 class ProductType(DjangoObjectType):
@@ -31,6 +32,12 @@ class InvoiceType(DjangoObjectType):
 class ItemType(DjangoObjectType):
     class Meta:
         model = Item
+        fields = '__all__'
+
+
+class CrudeItemType(DjangoObjectType):
+    class Meta:
+        model = CrudeInvoiceItem
         fields = '__all__'
 
 
@@ -185,10 +192,27 @@ class CreateInvoice(graphene.Mutation):
         return CreateInvoice(invoice=invoice, ok=ok)
 
 
+class UploadMutation(graphene.Mutation):
+    class Arguments:
+        file = Upload(required=True)
+
+    success = graphene.Boolean()
+    invoice = graphene.Field(InvoiceType)
+
+    def mutate(self, info, file, **kwargs):
+        new_invoice = InvoiceParser(file)
+        new_invoice.save()
+
+        invoice = Invoice.objects.get(pk=new_invoice.pk)
+
+        return UploadMutation(success=True, invoice=invoice)
+
+
 class Mutation(graphene.ObjectType):
     create_supplier = CreateSupplier.Field()
     update_supplier = UpdateSupplierMutation.Field()
     create_invoice = CreateInvoice.Field()
+    upload_file = UploadMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

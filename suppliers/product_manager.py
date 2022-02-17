@@ -1,4 +1,4 @@
-from .models import Product, ProductCodes, BsaleCodes
+from .models import Product, ProductCodes
 from bsale_api_helper.api_helper import get_variant_list
 
 
@@ -18,12 +18,14 @@ class ProductClass:
         self.qty = 0
         self.unit = ""
         self.total_price = 0
+        self.discount = 0
         self.bsale_code = None
-        self.get_product_by_code()
 
     def get_product_by_code(self):
         for code in self.codes:
             try:
                 self.product = ProductCodes.objects.filter(code__exact=code).get().product
-            except Exception:
+                self.bsale_code = self.product.bsale_code
+            except ProductCodes.DoesNotExist:
                 continue
+
