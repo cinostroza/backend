@@ -72,6 +72,7 @@ class Item(models.Model):
 
     class Meta:
         ordering = ['product']
+        unique_together = ('product', 'invoice')
 
     def __str__(self):
         return str(self.product_id)
@@ -84,6 +85,7 @@ class CrudeInvoiceItem(models.Model):
     units = models.CharField(max_length=20, null=True)
     quantity = models.IntegerField(null=False)
     invoice = models.ForeignKey(Invoice, related_name="crude_item", on_delete=models.CASCADE)
+    related_item = models.ForeignKey(Item, related_name="related_item", on_delete=models.CASCADE, null=True)
 
     class Meta:
         ordering = ['name']

@@ -12,8 +12,9 @@ class InvoiceParser:
         self.supplier_name = ""
         self.product_list = []
         self.invoice_xml = invoice_xml
-        self.parse_invoice()
         self.date = ""
+        self.pk = None
+        self.parse_invoice()
 
     def parse_invoice(self):
 
@@ -42,7 +43,10 @@ class InvoiceParser:
             product_price = float(product.find("{http://www.sii.cl/SiiDte}PrcItem").text)
             product_total_price = float(product.find("{http://www.sii.cl/SiiDte}MontoItem").text)
             product_supplier = supplier_data["RUTEmisor"]
-            product_discount = float(product.find("{http://www.sii.cl/SiiDte}DescuentoPct").text)
+            try:
+                product_discount = float(product.find("{http://www.sii.cl/SiiDte}DescuentoPct").text)
+            except Exception:
+                product_discount = 0
             current_product = ProductClass(codes=product_codes,
                                            name=product_name,
                                            supplier=product_supplier,
@@ -114,19 +118,23 @@ class InvoiceParser:
         supplier.save()
 
     def save_invoice(self, supplier):
-        new_invoice = Invoice(supplier=supplier, number=self.code, date="2022-02-02")
-        new_invoice.save()
-        for product in self.product_list:
-            new_crude_item = CrudeInvoiceItem(
-                name=product.name,
-                cost=product.price,
-                discount=product.discount,
-                units=product.unit,
-                quantity=product.qty,
-                invoice=new_invoice
-            )
-            new_crude_item.save()
-        return new_invoice.pk
+        try:
+            invoice = Invoice.objects.get(number__exact=self.code)
+            self.pk = invoice.pk
+        except Invoice.DoesNotExist:
+            new_invoice = Invoice(supplier=supplier, number=self.code, date=self.date)
+            new_invoice.save()
+            for product in self.product_list:
+                new_crude_item = CrudeInvoiceItem(
+                    name=product.name,
+                    cost=product.price,
+                    discount=product.discount,
+                    units=product.unit,
+                    quantity=product.qty,
+                    invoice=new_invoice
+                )
+                new_crude_item.save()
+            self.pk = new_invoice.pk
 
     def save(self):
 
