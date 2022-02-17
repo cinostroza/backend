@@ -18,13 +18,14 @@ class ProductClass:
         self.qty = 0
         self.unit = ""
         self.total_price = 0
+        self.discount = 0
         self.bsale_code = None
-        self.get_product_by_code()
 
     def get_product_by_code(self):
         for code in self.codes:
             try:
                 self.product = ProductCodes.objects.filter(code__exact=code).get().product
                 self.bsale_code = self.product.bsale_code
-            except Exception:
+            except ProductCodes.DoesNotExist:
                 continue
+

@@ -56,7 +56,7 @@ class ProductCodes(models.Model):
 class Invoice(models.Model):
     supplier = models.ForeignKey(Supplier, related_name="invoice", on_delete=models.CASCADE)
     number = models.CharField(max_length=100, name=False)
-    date = models.DateField()
+    date = models.DateField(null=True)
 
     def __str__(self):
         return str(self.number)
@@ -76,3 +76,17 @@ class Item(models.Model):
     def __str__(self):
         return str(self.product_id)
 
+
+class CrudeInvoiceItem(models.Model):
+    name = models.CharField(max_length=500)
+    cost = models.FloatField(null=False)
+    discount = models.FloatField(null=True)
+    units = models.CharField(max_length=20, null=True)
+    quantity = models.IntegerField(null=False)
+    invoice = models.ForeignKey(Invoice, related_name="crude_item", on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return str(self.name)
