@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 from os import environ
+import django
+from django.utils.encoding import force_str
+django.utils.encoding.force_text = force_str
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,18 +82,23 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'minero_db',
+#         'USER': 'root',
+#         'PASSWORD': 'my-secret-pw',
+#         'HOST': '0.0.0.0',
+#         'PORT': '49907',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'minero_db',
-        'USER': 'root',
-        'PASSWORD': 'my-secret-pw',
-        'HOST': '0.0.0.0',
-        'PORT': '49907',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
     }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
