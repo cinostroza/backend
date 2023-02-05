@@ -24,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ.get('SECRET_KEY')
+# SECRET_KEY = environ.get('SECRET_KEY')
+SECRET_KEY = "SOME_SECRET_KEY"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
-    'suppliers',
+    'invoice_manager',
     'corsheaders',
 ]
 
@@ -141,7 +142,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 GRAPHENE = {
-    "SCHEMA": 'suppliers.schema.schema',
+    "SCHEMA": 'invoice_manager.schema.schema',
 }
 
 CORS_ALLOWED_ORIGINS = [

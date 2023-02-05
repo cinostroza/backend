@@ -1,5 +1,4 @@
 import requests
-import pprint
 
 BSALE_API_ADDRESS = "https://api.bsale.cl/"
 API_TOKEN = "7a2bffa2db0f3cfd1054e8e187a7af33df39f974"
@@ -121,7 +120,7 @@ def get_product(url):
 
 def get_url(url):
     """
-    This function will get the data from any endpoint thats harc oded into a full url.
+    This function will get the data from any endpoint that's harc oded into a full url.
     :param: This function only takes the full url for an endpoint, no params.
     :return: Json data
     """
